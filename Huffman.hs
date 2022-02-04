@@ -1,5 +1,7 @@
 -- DO NOT MODIFY THE FOLLOWING LINES
 
+
+--Kan du se denna kommentar Cecilia?
 module Huffman(HuffmanTree, characterCounts, huffmanTree, codeTable, encode, compress, decompress) where
 
 import Table
