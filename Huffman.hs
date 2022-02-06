@@ -1,9 +1,7 @@
 -- DO NOT MODIFY THE FOLLOWING LINES
 
-
---Kan du se denna kommentar Cecilia?
 module Huffman(HuffmanTree, characterCounts, huffmanTree, codeTable, encode, compress, decompress) where
-
+import Debug.Trace
 import Table
 import PriorityQueue
 
@@ -25,8 +23,11 @@ type BitCode = [Bool]
    EXAMPLES:
  -}
 characterCounts :: String -> Table Char Int
-characterCounts = undefined
+characterCounts s = characterCountsAux s Table.empty
 
+characterCountsAux :: String -> Table Char Int -> Table Char Int
+characterCountsAux "" t = t
+characterCountsAux (x:xs) t = characterCountsAux xs $ Table.insert t x (Table.iterate t (\acc (k,v) -> if k == x then acc + v else acc) 1)
 
 -- modify and add comments as needed
 data HuffmanTree = HuffmanTree ()
