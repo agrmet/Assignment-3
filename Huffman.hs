@@ -30,8 +30,7 @@ characterCountsAux "" t = t
 characterCountsAux (x:xs) t = characterCountsAux xs $ Table.insert t x (Table.iterate t (\acc (k,v) -> if k == x then acc + v else acc) 1)
 
 -- modify and add comments as needed
-data HuffmanTree = HuffmanTree ()
-
+data HuffmanTree = Leaf Char Int | Node HuffmanTree Int HuffmanTree deriving (Show, Eq)
 
 {- huffmanTree t
    PRE:  t maps each key to a positive value
@@ -49,31 +48,43 @@ huffmanTree = undefined
 codeTable :: HuffmanTree -> Table Char BitCode
 codeTable = undefined
 
-
 {- encode h s
    PRE: All characters in s appear in h
    RETURNS: the concatenation of the characters of s encoded using the Huffman code table of h.
    EXAMPLES:
  -}
 encode :: HuffmanTree -> String -> BitCode
-encode = undefined
+encode (Leaf k v) s = []
+encode h [] = []
+encode h s = encode' h (head s) [] ++ encode h (tail s)
+  where
+    encode' (Leaf k v) c acc
+      | k == c = acc
+      | otherwise = []
+    encode' (Node l _ r) c acc = (encode' l c acc ++ [False]) ++ (encode' r c acc ++ [True])
 
 {- compress s
    RETURNS: (a Huffman tree based on s, the Huffman coding of s under this tree)
    EXAMPLES:
  -}
 compress :: String -> (HuffmanTree, BitCode)
-compress = undefined
-
+compress s = (huffmanTree (characterCounts s), encode (huffmanTree (characterCounts s)) s)
 
 {- decompress h bits
    PRE:  bits is a concatenation of valid Huffman code words for h
    RETURNS: the decoding of bits under h
-   EXAMPLES:
- -}
+   EXAMPLES: decompress h [False,False,False] == "e"
+             h == Fig. 4 huffmantree in PDF
+-}
 decompress :: HuffmanTree -> BitCode -> String
-decompress = undefined
-
+-- VARIANT: 
+decompress h [] = []
+decompress h bits = decompress' h bits h
+  where
+    decompress' (Leaf k v) b acc = k : decompress acc b
+    decompress' (Node l _ r) b acc
+      | head b = decompress' r (tail b) acc
+      | otherwise = decompress' l (tail b) acc
 
 --------------------------------------------------------------------------------
 -- Test Cases
